@@ -35,6 +35,14 @@ class Directory < Hash
     }
   end
 
+  def filesystem= (value)
+    self.each_value {|file|
+      file.filesystem = value
+    }
+
+    @filesystem = value
+  end
+
   def name= (value)
     @parent.delete(@name)
     @name = value
@@ -63,6 +71,12 @@ class Directory < Hash
   end
 
   alias << push
+
+  def merge (dir)
+    dir.each_value {|file|
+      self << file
+    }
+  end
 
   def path
     path    = []

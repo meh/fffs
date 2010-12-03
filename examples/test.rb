@@ -1,7 +1,7 @@
 #! /usr/bin/env ruby
 require 'fffs'
 
-fs = FFFS::FileSystem.new(DATA.read)
+fs = FFFS::FileSystem.parse(DATA.read)
 
 puts fs.inspect
 puts ''

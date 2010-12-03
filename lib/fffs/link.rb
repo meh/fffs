@@ -20,11 +20,27 @@
 module FFFS
 
 class Link
-  attr_accessor :parent, :to
+  attr_accessor :filesystem, :parent
+  
+  attr_accessor :to
 
-  def initialize (file, parent=nil)
+  def initialize (file, parent=nil, filesystem=nil)
     @parent = parent
     @to     = file
+  end
+
+  def content
+    handle = self.filesystem
+
+    @to.split('/').reject {|s| s.empty?}.each {|path|
+      handle = handle[path]
+
+      break if !handle
+    }
+
+    if handle
+      handle.content rescue ''
+    end
   end
 end
 

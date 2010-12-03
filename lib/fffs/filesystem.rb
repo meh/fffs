@@ -24,12 +24,18 @@ require 'fffs/link'
 module FFFS
 
 class FileSystem < Directory
-  def initialize (text)
+  def self.parse (text)
+    self.new.parse(text)
+  end
+
+  def initialize
     @name = '/'
 
     self.parent     = self
     self.filesystem = self
+  end
 
+  def parse (text)
     separator = Regexp.escape(text.match(/^(.+)$/)[1])
     text      = text.sub(/^.*$/, '').gsub(/\r/, '')
     text[-1]  = ''
@@ -38,12 +44,21 @@ class FileSystem < Directory
     data.shift
 
     data.each_slice(2) {|(name, content)|
+      if name.include?(' -> ')
+        t, name, link = name.match(/^(.*?) -> (.*?)$/)
+      end
+
       path = ::File.dirname(name)
+      name = ::File.basename(name)
 
       if path == '.'
         parent = self 
 
-        self << File.new(::File.basename(name), content)
+        if link
+          self << Link.new(name, link)
+        else
+          self << File.new(name, content)
+        end
       else
         into = nil
 
@@ -51,9 +66,15 @@ class FileSystem < Directory
           into = self[dir] || (self << Directory.new(dir))
         }
 
-        into << File.new(::File.basename(name), content)
+        if link
+          into << Link.new(name, link)
+        else
+          into << File.new(name, content)
+        end
       end
     }
+
+    self
   end
 
   def path (path=nil)
