@@ -17,40 +17,19 @@
 # along with fffs. If not, see <http://www.gnu.org/licenses/>.
 #++
 
-require 'fffs/node'
-
 module FFFS
 
-class File
-  include Node
+module Node
+  def path
+    path    = []
+    current = self
 
-  attr_accessor :filesystem, :parent
+    begin
+      path   << current.name
+      current = current.parent
+    end while current != current.parent
 
-  attr_accessor :content
-  attr_reader   :name
-
-  def initialize (name, content='', parent=nil, filesystem=nil)
-    @filesystem = filesystem
-    @parent     = parent
-
-    @name = name
-
-    @content = content.clone
-    @content.force_encoding 'ASCII-8BIT'
-  end
-
-  def name= (value)
-    @parent.delete(@name)
-    @name = value
-    @parent << self
-  end
-
-  def to_s
-    @content
-  end
-
-  def inspect
-    self.path
+    "/#{path.reverse.join('/')}/".sub(%r{/*/}, '/')
   end
 end
 

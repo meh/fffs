@@ -38,7 +38,6 @@ class FileSystem < Directory
   def parse (text)
     separator = Regexp.escape(text.match(/^(.+)$/)[1])
     text      = text.sub(/^.*$/, '').gsub(/\r/, '')
-    text[-1]  = ''
 
     data = text.split(/\n\n#{separator} (.+?) #{separator}\n\n/)
     data.shift

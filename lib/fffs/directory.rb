@@ -17,9 +17,13 @@
 # along with fffs. If not, see <http://www.gnu.org/licenses/>.
 #++
 
+require 'fffs/node'
+
 module FFFS
 
 class Directory < Hash
+  include Node
+
   attr_accessor :filesystem, :parent
 
   attr_reader :name
@@ -76,18 +80,6 @@ class Directory < Hash
     dir.each_value {|file|
       self << file
     }
-  end
-
-  def path
-    path    = []
-    current = self
-
-    begin
-      path   << current.name
-      current = current.parent
-    end while current != current.parent
-
-    "/#{path.reverse.join('/')}/".sub(%r{/*/}, '/')
   end
 
   def inspect
