@@ -82,6 +82,12 @@ class Directory < Hash
     }
   end
 
+  alias __path path
+
+  def path
+    "#{__path}/".sub(%r{/*/}, '/')
+  end
+
   def inspect
     output = "#{self.path}\n"
 

@@ -59,10 +59,10 @@ class FileSystem < Directory
           self << File.new(name, content)
         end
       else
-        into = nil
+        into = self
 
         path.split('/').each {|dir|
-          into = self[dir] || (self << Directory.new(dir))
+          into = into[dir] || (into << Directory.new(dir))
         }
 
         if link

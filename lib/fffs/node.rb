@@ -29,7 +29,7 @@ module Node
       current = current.parent
     end while current != current.parent
 
-    "/#{path.reverse.join('/')}/".sub(%r{/*/}, '/')
+    "/#{path.reverse.join('/')}".sub(%r{/*/}, '/')
   end
 end
 
