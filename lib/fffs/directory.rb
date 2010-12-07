@@ -71,12 +71,16 @@ class Directory < Hash
   end
 
   def push (file)
-    self[file.name] = file
+    if self[file.name].is_a?(Directory) && file.is_a?(Directory)
+      self[file.name].merge(file)
+    else
+      self[file.name] = file
+    end
   end
 
   alias << push
 
-  def merge (dir)
+  def merge! (dir)
     dir.each_value {|file|
       self << file
     }
