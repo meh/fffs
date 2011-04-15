@@ -42,6 +42,12 @@ class Link
       handle.content rescue ''
     end
   end
+
+  def save (path)
+    require 'fileutils'
+
+    FileUtils.ln_sf path, to
+  end
 end
 
 end

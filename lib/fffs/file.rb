@@ -45,6 +45,12 @@ class File
     @parent << self
   end
 
+  def save (path)
+    ::File.open(path, 'wb') {|f|
+      f.write content
+    }
+  end
+
   def to_s
     @content
   end

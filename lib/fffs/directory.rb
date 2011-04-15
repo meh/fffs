@@ -92,6 +92,16 @@ class Directory < Hash
     "#{__path}/".sub(%r{/*/}, '/')
   end
 
+  def save (path)
+    require 'fileutils'
+
+    FileUtils.mkpath(path)
+
+    each_value {|f|
+      f.save("#{path}/#{f.name}")
+    }
+  end
+
   def inspect
     output = "#{self.path}\n"
 
