@@ -25,7 +25,19 @@ module FFFS
 
 class FileSystem < Directory
   def self.parse (text)
-    self.new.parse(text)
+    fs = self.new
+
+    fs.parse(text)
+
+    return fs
+  end
+
+  def self.load (path)
+    fs = self.new
+
+    fs.load(path)
+
+    return fs
   end
 
   def initialize
@@ -33,6 +45,10 @@ class FileSystem < Directory
 
     self.parent     = self
     self.filesystem = self
+  end
+
+  def path (path=nil)
+    '/'
   end
 
   def parse (text)
@@ -72,12 +88,6 @@ class FileSystem < Directory
         end
       end
     }
-
-    self
-  end
-
-  def path (path=nil)
-    '/'
   end
 end
 

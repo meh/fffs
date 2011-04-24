@@ -102,6 +102,27 @@ class Directory < Hash
     }
   end
 
+  def load (path)
+    require 'find'
+
+    Find.find(path) {|f|
+      next unless ::File.file?(f) || ::File.symlink?(f)
+
+      tmp  = ::File.dirname(f[path.length + 1, f.length]) rescue next
+      into = self
+
+      tmp.split('/').each {|dir|
+        into = into[dir] || (into << Directory.new(dir))
+      }
+
+      if ::File.file?(f)
+        into << File.new(::File.basename(f), ::File.read(f))
+      elsif ::File.symlink?(f)
+        into << Link.new(::File.basename(f), ::File.readlink(f))
+      end
+    }
+  end
+
   def inspect
     output = "#{self.path}\n"
 

@@ -51,8 +51,6 @@ class PakFile < FFFS::FileSystem
 
 			previous = path
 		end
-
-		self
   end
 end
 
