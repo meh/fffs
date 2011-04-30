@@ -45,10 +45,30 @@ class File
     @parent << self
   end
 
-  def save (path)
-    ::File.open(path, 'wb') {|f|
-      f.write content
-    }
+  def save (file)
+    if file.is_a?(String)
+      ::File.open(file, 'wb') {|f|
+        f.write content
+      }
+    else
+      file.write content
+      file.flush
+    end
+  end
+
+  def execute (*args)
+    require 'tempfile'
+
+    tmp = Tempfile.new('fffs')
+    tmp.chmod 0700
+
+    save(tmp)
+
+    tmp.close
+
+    Kernel.system(tmp.path, *args)
+  ensure
+    tmp.unlink
   end
 
   def to_s

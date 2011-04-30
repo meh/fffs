@@ -29,17 +29,29 @@ class Link
     @to     = file
   end
 
-  def content
-    handle = self.filesystem
+  def handle
+    return @handle if @handle
+
+    @handle = self.filesystem
 
     @to.split('/').reject {|s| s.empty?}.each {|path|
-      handle = handle[path]
+      @handle = @handle[path]
 
-      break if !handle
+      break if !@handle
     }
 
+    return @handle
+  end
+
+  def content
     if handle
-      handle.content rescue ''
+      handle.content
+    end
+  end
+
+  def execute (*args)
+    if handle
+      handle.execute(*args)
     end
   end
 
