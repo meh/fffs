@@ -17,40 +17,40 @@ class PakFile < FFFS::FileSystem
     version         = stream.read(4).unpack('V').shift
     stream.read 12
     fileNumber      = stream.read(4).unpack('V').shift
-		directoryLength = stream.read(4).unpack('V').shift
+    directoryLength = stream.read(4).unpack('V').shift
 
-		current  = 0
-		previous = nil
+    current  = 0
+    previous = nil
 
-		1.upto(fileNumber) do
-			nameLength      = stream.read(1).ord
-			nameReuseLength = stream.read(1).ord
+    1.upto(fileNumber) do
+      nameLength      = stream.read(1).ord
+      nameReuseLength = stream.read(1).ord
 
-			path = String.new
+      path = String.new
 
-			if nameReuseLength > 0 && previous
-				path << previous[0, nameReuseLength]
-			end
+      if nameReuseLength > 0 && previous
+        path << previous[0, nameReuseLength]
+      end
 
-			path << stream.read(nameLength - nameReuseLength)
+      path << stream.read(nameLength - nameReuseLength)
 
-			path.gsub!('\\', '/')
+      path.gsub!('\\', '/')
 
-			offset = stream.read(4).unpack('V').shift
-			length = stream.read(4).unpack('V').shift
+      offset = stream.read(4).unpack('V').shift
+      length = stream.read(4).unpack('V').shift
 
-			into = self
+      into = self
 
-			File.dirname(path).split('/').each {|dir|
-				into = into[dir] || (into << FFFS::Directory.new(dir))
-			}
+      File.dirname(path).split('/').each {|dir|
+        into = into[dir] || (into << FFFS::Directory.new(dir))
+      }
 
-			back = stream.tell; stream.seek(offset)
-			into << FFFS::File.new(::File.basename(path), stream.read(length))
-			stream.seek(back)
+      back = stream.tell; stream.seek(offset)
+      into << FFFS::File.new(::File.basename(path), stream.read(length))
+      stream.seek(back)
 
-			previous = path
-		end
+      previous = path
+    end
   end
 end
 
