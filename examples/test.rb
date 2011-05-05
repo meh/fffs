@@ -7,11 +7,11 @@ puts fs.inspect
 puts ''
 
 puts "file's content:"
-puts fs.file.content
+puts fs.file
 puts ''
 
 puts "dir/file's content:"
-puts fs.dir.file.content
+puts fs['dir/file']
 
 __END__
 ---

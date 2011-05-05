@@ -32,8 +32,11 @@ class File
   def initialize (name, content='', parent=nil, filesystem=nil)
     @filesystem = filesystem
     @parent     = parent
+    @name       = name
 
-    @name = name
+    if @name.include?('/')
+      raise ArgumentError.new('/ is forbidden in names')
+    end
 
     @content = content.clone
     @content.force_encoding 'ASCII-8BIT'

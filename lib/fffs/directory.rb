@@ -31,8 +31,11 @@ class Directory < Hash
   def initialize (name, files=[], parent=nil, filesystem=nil) 
     @filesystem = filesystem
     @parent     = parent
+    @name       = name
 
-    @name = name
+    if @name.include?('/')
+      raise ArgumentError.new('/ is forbidden in names')
+    end
 
     files.each {|file|
       self[file.name] = file
@@ -61,13 +64,29 @@ class Directory < Hash
     self[id.to_s]
   end
 
-  alias __set []=
+  def [] (name)
+    return super(name) unless name.include?('/')
+    
+    result = self
+
+    name.split('/').each {|name|
+      case name
+        when '.'  then  next
+        when '..' then result = result.parent
+        else           result = result[name]
+      end
+
+      break if result.nil?
+    }
+
+    result
+  end
 
   def []= (name, value)
     value.parent     = self
     value.filesystem = self.filesystem
 
-    __set(name, value)
+    super(name, value)
   end
 
   def push (file)
