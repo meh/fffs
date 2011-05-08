@@ -17,4 +17,8 @@
 # along with fffs. If not, see <http://www.gnu.org/licenses/>.
 #++
 
+module FFFS
+  Version = '0.0.10'
+end
+
 require 'fffs/filesystem'

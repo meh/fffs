@@ -23,37 +23,39 @@ class Link
   attr_accessor :filesystem, :parent
   
   attr_accessor :to
+  attr_reader :name
 
-  def initialize (file, parent=nil, filesystem=nil)
+  def initialize (name, file, parent=nil, filesystem=nil)
     @parent = parent
+    @name   = name
     @to     = file
   end
 
-  def handle
-    return @handle if @handle
+  def name= (value)
+    @parent.delete(@name)
+    @name = value
+    @parent << self
+  end
 
-    @handle = self.filesystem
+  def handle
+    handle = self.filesystem
 
     @to.split('/').reject {|s| s.empty?}.each {|path|
-      @handle = @handle[path]
+      handle = handle[path]
 
-      break if !@handle
+      break if !handle
     }
 
-    return @handle
+    return handle
   end
 
-  def content
-    if handle
-      handle.content
+  [:content, :chmod, :execute, :mode].each {|meth|
+    define_method meth do |*args|
+      if tmp = handle
+        tmp.send meth, *args
+      end
     end
-  end
-
-  def execute (*args)
-    if handle
-      handle.execute(*args)
-    end
-  end
+  }
 
   def save (path)
     require 'fileutils'

@@ -27,13 +27,14 @@ class File
   attr_accessor :filesystem, :parent
 
   attr_accessor :content
-  attr_reader   :name
+  attr_reader   :name, :mode
 
   def initialize (name, content='', parent=nil, filesystem=nil)
     @filesystem = filesystem
     @parent     = parent
 
     @name = name
+    @mode = 0644
 
     @content = content.clone
     @content.force_encoding 'ASCII-8BIT'
@@ -45,15 +46,33 @@ class File
     @parent << self
   end
 
-  def save (file)
+  def chmod (mode)
+    @mode = mode
+  end
+
+  def save (file, mode=nil)
+    result = true
+
     if file.is_a?(String)
       ::File.open(file, 'wb') {|f|
-        f.write content
+        result = f.write content
+
+        begin
+          f.chmod(mode || @mode)
+        rescue Exception => e
+        end
       }
     else
-      file.write content
+      result = file.write content
       file.flush
+
+      begin
+        file.chmod(mode || @mode)
+      rescue Exception => e
+      end
     end
+
+    result
   end
 
   def execute (*args)

@@ -26,17 +26,22 @@ class Directory < Hash
 
   attr_accessor :filesystem, :parent
 
-  attr_reader :name
+  attr_reader :name, :mode
 
   def initialize (name, files=[], parent=nil, filesystem=nil) 
     @filesystem = filesystem
     @parent     = parent
 
     @name = name
+    @mode = 0755
 
     files.each {|file|
       self[file.name] = file
     }
+  end
+
+  def chmod (mode)
+    @mode = mode
   end
 
   def filesystem= (value)
@@ -92,13 +97,14 @@ class Directory < Hash
     "#{__path}/".sub(%r{/*/}, '/')
   end
 
-  def save (path)
+  def save (path, mode=nil)
     require 'fileutils'
 
     FileUtils.mkpath(path)
+    ::File.chmod(mode || @mode, path)
 
-    each_value {|f|
-      f.save("#{path}/#{f.name}")
+    map {|(_, f)|
+      f.save("#{path}/#{f.name}", mode)
     }
   end
 
