@@ -74,33 +74,19 @@ class FileSystem < Directory
         content = Base64.decode64(content)
       end
 
-      if path == '.'
-        parent = self 
+      into = self
 
-        if link
-          self << Link.new(name, link)
-        else
-          self << File.new(name, content)
+      path.split('/').each {|dir|
+        into = into[dir] || (into << Directory.new(dir))
+      }
 
-          if mime
-            self[name].mime = mime
-          end
-        end
+      if link
+        into << Link.new(name, link)
       else
-        into = self
+        into << File.new(name, content)
 
-        path.split('/').each {|dir|
-          into = into[dir] || (into << Directory.new(dir))
-        }
-
-        if link
-          into << Link.new(name, link)
-        else
-          into << File.new(name, content)
-
-          if mime
-            into[name].mime = mime
-          end
+        if mime
+          into[name].mime = mime
         end
       end
     }
