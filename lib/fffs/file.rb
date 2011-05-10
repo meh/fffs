@@ -26,7 +26,7 @@ class File
 
   attr_accessor :filesystem, :parent
 
-  attr_accessor :content
+  attr_accessor :content, :mime
   attr_reader   :name, :mode
 
   def initialize (name, content='', parent=nil, filesystem=nil)
@@ -35,6 +35,7 @@ class File
 
     @name = name
     @mode = 0644
+    @mime = 'text/plain'
 
     @content = content.clone
     @content.force_encoding 'ASCII-8BIT'

@@ -59,12 +59,20 @@ class FileSystem < Directory
     data.shift
 
     data.each_slice(2) {|(name, content)|
-      if name.include?(' -> ')
-        t, name, link = name.match(/^(.*?) -> (.*?)$/)
+      if matches = name.match(/^(.+?) -> (.+?)$/)
+        whole, name, link = matches.to_a
+      elsif matches = name.match(/(.+?)\s+\((.*?)\)$/)
+        whole, name, mime = matches.to_a
       end
 
       path = ::File.dirname(name)
       name = ::File.basename(name)
+
+      if mime
+        require 'base64'
+
+        content = Base64.decode64(content)
+      end
 
       if path == '.'
         parent = self 
@@ -73,6 +81,10 @@ class FileSystem < Directory
           self << Link.new(name, link)
         else
           self << File.new(name, content)
+
+          if mime
+            self[name].mime = mime
+          end
         end
       else
         into = self
@@ -85,6 +97,10 @@ class FileSystem < Directory
           into << Link.new(name, link)
         else
           into << File.new(name, content)
+
+          if mime
+            into[name].mime = mime
+          end
         end
       end
     }

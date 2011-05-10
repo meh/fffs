@@ -49,7 +49,7 @@ class Link
     return handle
   end
 
-  [:content, :chmod, :execute, :mode].each {|meth|
+  [:content, :chmod, :execute, :mode, :mime].each {|meth|
     define_method meth do |*args|
       if tmp = handle
         tmp.send meth, *args
