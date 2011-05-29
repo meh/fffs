@@ -1,6 +1,6 @@
 Gem::Specification.new {|s|
     s.name         = 'fffs'
-    s.version      = '0.0.11'
+    s.version      = '0.0.12'
     s.author       = 'meh.'
     s.email        = 'meh@paranoici.org'
     s.homepage     = 'http://github.com/meh/fffs'
