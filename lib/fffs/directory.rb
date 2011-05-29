@@ -66,13 +66,38 @@ class Directory < Hash
     self[id.to_s]
   end
 
-  alias __set []=
+  def [] (path)
+    if path.include?('/')
+      result = path.start_with?('/') ? filesystem : self
+      last   = nil
+
+      path.split(%r{/+}).each {|piece|
+        next if piece.empty? || piece == '.'
+
+        if !result.is_a?(Directory)
+          raise RuntimeError.new "#{last} isn't a directory"
+        end
+
+        if piece == '..'
+          result = result.parent
+        else
+          result = result[piece]
+        end
+
+        last = piece
+      }
+
+      result
+    else
+      super(path)
+    end
+  end
 
   def []= (name, value)
     value.parent     = self
     value.filesystem = self.filesystem
 
-    __set(name, value)
+    super(name, value)
   end
 
   def push (file)
