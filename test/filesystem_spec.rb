@@ -4,7 +4,15 @@ require 'fffs'
 
 fs = FFFS::FileSystem.parse(File.read(ARGV.first).split(/^__END__$/)[1])
 
-describe FFFS do
+describe '/' do
+  it 'has all needed files' do
+    fs.file.class.should == FFFS::File
+
+    fs.dir.class.should        == FFFS::Directory
+    fs.dir.file.class.should   == FFFS::File
+    fs.dir.binary.class.should == FFFS::File
+  end
+
   describe '/file' do
     it 'has the right content' do
       fs['/file'].to_s.should == "bla bla bla bla\nblablabla\nblablablablab lab lab la"
