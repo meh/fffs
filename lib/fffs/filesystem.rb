@@ -77,7 +77,13 @@ class FileSystem < Directory
       into = self
 
       path.split('/').each {|dir|
-        into = into[dir] || (into << Directory.new(dir))
+        if dir == '.'
+          next
+        elsif dir == '..'
+          into = into.parent
+        else
+          into = into[dir] || (into << Directory.new(dir))
+        end
       }
 
       if link
