@@ -38,7 +38,7 @@ class File
     @mime = 'text/plain'
 
     @content = content.clone
-    @content.force_encoding 'ASCII-8BIT'
+    @content.force_encoding('ASCII-8BIT') rescue nil
   end
 
   def name= (value)

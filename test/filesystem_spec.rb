@@ -2,41 +2,43 @@
 require 'rubygems'
 require 'fffs'
 
-fs = FFFS::FileSystem.parse(File.read(ARGV.first).split(/^__END__$/)[1])
-
 describe '/' do
-  it 'has all needed files' do
-    fs.file.class.should == FFFS::File
+  before do
+    @fs = FFFS::FileSystem.parse(File.read(ARGV.first).split(/^__END__$/)[1])
+  end
 
-    fs.dir.class.should        == FFFS::Directory
-    fs.dir.file.class.should   == FFFS::File
-    fs.dir.binary.class.should == FFFS::File
+  it 'has all needed files' do
+    @fs.file.class.should == FFFS::File
+
+    @fs.dir.class.should        == FFFS::Directory
+    @fs.dir.file.class.should   == FFFS::File
+    @fs.dir.binary.class.should == FFFS::File
   end
 
   describe '/file' do
     it 'has the right content' do
-      fs['/file'].to_s.should == "bla bla bla bla\nblablabla\nblablablablab lab lab la"
+      @fs['/file'].to_s.should == "bla bla bla bla\nblablabla\nblablablablab lab lab la"
     end
   end
 
   describe '/dir' do
     it 'has #length 2' do
-      fs['/dir'].length.should == 2
+      @fs['/dir'].length.should == 2
     end
 
     describe '/file' do
       it 'has the right content' do
-        fs['/dir/file'].to_s.should == ':3'
+        @fs['/dir/file'].to_s.should == ':3'
       end
     end
 
     describe '/binary' do
       it 'has image/png mime type' do
-        fs['/dir/binary'].mime.should == 'image/png'
+        @fs['/dir/binary'].mime.should == 'image/png'
       end
 
       it 'is really a PNG' do
-        fs['/dir/binary'].content[0 ... 4].should == "\x89PNG"
+        @fs['/dir/binary'].content[0 ... 4].should == "\x89PNG"
       end
     end
   end
